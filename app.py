@@ -29,37 +29,37 @@ def notify():
       except:
          print("category not defined")
       
-        if logs['webhookId']==os.environ['ALCHEMY_KEY'] and category == 'token':
-          # get the network name
-          network = logs['event']['network']
+         if logs['webhookId']==os.environ['ALCHEMY_KEY'] and category == 'token':
+           # get the network name
+           network = logs['event']['network']
 
-          # check the network and set the domain accordingly
-          if network == 'ETH_GOERLI':
-            domain = 'goerli.etherscan.io'
-          elif network == 'ETH_MAINNET':
-            domain = 'etherscan.io'
-          elif network == 'POLYGON_MAINNET':
-            domain = 'polygonscan.com'
-          elif network == 'BSC_MAINNET':
-            domain = 'bscscan.com'
-          else:
-            # unknown network, skip the processing
-            return Response(status=200)
+           # check the network and set the domain accordingly
+           if network == 'ETH_GOERLI':
+             domain = 'goerli.etherscan.io'
+           elif network == 'ETH_MAINNET':
+             domain = 'etherscan.io'
+           elif network == 'POLYGON_MAINNET':
+             domain = 'polygonscan.com'
+           elif network == 'BSC_MAINNET':
+             domain = 'bscscan.com'
+           else:
+             # unknown network, skip the processing
+             return Response(status=200)
 
-          # extract the necessary information
-          txhash = "["+str(logs['event']['activity'][0]['hash'])+"](https://"+domain+"/tx/"+str(logs['event']['activity'][0]['hash'])+")"
+           # extract the necessary information
+           txhash = "["+str(logs['event']['activity'][0]['hash'])+"](https://"+domain+"/tx/"+str(logs['event']['activity'][0]['hash'])+")"
            
-          from_address = "["+str(logs['event']['activity'][0]['fromAddress'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['fromAddress'])+"#tokentxns)"
-          to_address = "["+str(logs['event']['activity'][0]['toAddress'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['toAddress'])+"#tokentxns)"
+           from_address = "["+str(logs['event']['activity'][0]['fromAddress'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['fromAddress'])+"#tokentxns)"
+           to_address = "["+str(logs['event']['activity'][0]['toAddress'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['toAddress'])+"#tokentxns)"
           
-          token_symbol = logs['event']['activity'][0]['asset']
-          token_address = "["+str(logs['event']['activity'][0]['rawContract']['address'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['rawContract']['address'])+")"
+           token_symbol = logs['event']['activity'][0]['asset']
+           token_address = "["+str(logs['event']['activity'][0]['rawContract']['address'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['rawContract']['address'])+")"
           
-          value = str(round(logs['event']['activity'][0]['value']))
+           value = str(round(logs['event']['activity'][0]['value']))
 
-          # create the text string
-          message = f'*Token transfer:*\n{txhash}\nfrom {from_address} \nto {to_address}: \nvalue: {value} *{token_symbol}* {token_address}'
-          bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
+           # create the text string
+           message = f'*Token transfer:*\n{txhash}\nfrom {from_address} \nto {to_address}: \nvalue: {value} *{token_symbol}* {token_address}'
+           bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
       
   return Response(status=200)
 
