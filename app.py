@@ -29,7 +29,7 @@ def notify():
       except:
          print("category not defined")
       
-      if logs['webhookId']==os.environ['ALCHEMY_KEY'] and category == 'token':
+      if logs['webhookId']==os.environ['ALCHEMY_KEY_MUMBAI'] and category == 'token':
         # extract the necessary information
         txhash = from_address = "["+str(logs['event']['activity'][0]['hash'])+"](https://etherscan.io/tx/"+str(logs['event']['activity'][0]['hash'])+")"
          
