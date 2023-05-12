@@ -30,21 +30,23 @@ def notify():
          print("category not defined")
             
       webhook_id = logs['webhookId']
-      if (webhook_id == os.environ['ALCHEMY_KEY_MUMBAI'] or webhook_id == os.environ['ALCHEMY_KEY_GOERLI']) and category == 'token':
+      if (webhook_id == os.environ['ALCHEMY_KEY_MUMBAI'] or webhook_id == os.environ['ALCHEMY_KEY_GOERLI'] or webhook_id == os.environ['ALCHEMY_KEY_ETH'] or webhook_id == os.environ['ALCHEMY_KEY_POLYGON'] or webhook_id == os.environ['ALCHEMY_KEY_OPTIMISM'] or webhook_id == os.environ['ALCHEMY_KEY_ARBITRUM']) and category == 'token':
         # get the network name
         network = logs['event']['network']
 
         # check the network and set the domain accordingly
-        if network == 'ETH_GOERLI':
+        if network == 'MATIC_MUMBAI':
+          domain = 'mumbai.polygonscan.com'
+        elif network == 'ETH_GOERLI':
           domain = 'goerli.etherscan.io'
         elif network == 'ETH_MAINNET':
           domain = 'etherscan.io'
         elif network == 'POLYGON_MAINNET':
           domain = 'polygonscan.com'
-        elif network == 'BSC_MAINNET':
-          domain = 'bscscan.com'
-        elif network == 'MATIC_MUMBAI':
-          domain = 'mumbai.polygonscan.com'
+        elif network == 'OPTIMISM_MAINNET':
+          domain = 'optimistic.etherscan.io'
+        elif network == 'ARBITRUM_MAINNET':
+          domain = 'arbiscan.io'
         else:
           # unknown network, skip the processing
           return Response(status=200)
