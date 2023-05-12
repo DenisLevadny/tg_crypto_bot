@@ -12,63 +12,66 @@ user_chat_id = os.environ['CHANNEL_ID']
 
 @app.route('/')
 def hello():
-    return 'Service for sending notifications to a telegram channel '
+ return 'Service for sending notifications to a telegram channel '
 
 @app.route('/notify', methods=['POST','GET'])
 def notify():
-  logs = request.json
-  if (len(logs) == 0):
-    print("Empty logs array received, skipping")
-  else:    
-      
-      print(logs)
-      
-      category = ""
-      try:
-         category = logs['event']['activity'][0]['category']
-      except:
-         print("category not defined")
-         
-         webhook_id = logs['webhookId']
-         if (webhook_id == os.environ['ALCHEMY_KEY'] or webhook_id == os.environ['ALCHEMY_KEY_GOERLY']) and category == 'token':
-           # get the network name
-           network = logs['event']['network']
+ logs = request.json
+ if (len(logs) == 0):
+  print("Empty logs array received, skipping")
+ else: 
+ 
+  print(logs)
+ 
+ category = ""
+ try:
+  category = logs['event']['activity'][0]['category']
+ except:
+  print("category not defined")
+ 
+ webhook_id = logs['webhookId']
+ if (webhook_id == os.environ['ALCHEMY_KEY_GOERLY'] or webhook_id == os.environ['ALCHEMY_KEY_MUMBAI'] or webhook_id == os.environ['ALCHEMY_KEY_BSC']) and category == 'token':
+  # get the network name
+  network = logs['event']['network']
 
-           # check the network and set the domain accordingly
-           if network == 'ETH_GOERLI':
-             domain = 'goerli.etherscan.io'
-           elif network == 'ETH_MAINNET':
-             domain = 'etherscan.io'
-           elif network == 'POLYGON_MAINNET':
-             domain = 'polygonscan.com'
-           elif network == 'BSC_MAINNET':
-             domain = 'bscscan.com'
-           elif network == 'MATIC_MUMBAI':
-             domain = 'mumbai.polygonscan.com'
-           else:
-             # unknown network, skip the processing
-             return Response(status=200)
+ # create a dictionary to map the network names to the domain names
+ domains = {
+ 'ETH_GOERLI': 'goerli.etherscan.io',
+ 'ETH_MAINNET': 'etherscan.io',
+ 'POLYGON_MAINNET': 'polygonscan.com',
+ 'BSC_MAINNET': 'bscscan.com',
+ 'MATIC_MUMBAI': 'mumbai.polygonscan.com'
+ }
 
-           # extract the necessary information
-           txhash = "["+str(logs['event']['activity'][0]['hash'])+"](https://"+domain+"/tx/"+str(logs['event']['activity'][0]['hash'])+")"
-           
-           from_address = "["+str(logs['event']['activity'][0]['fromAddress'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['fromAddress'])+"#tokentxns)"
-           to_address = "["+str(logs['event']['activity'][0]['toAddress'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['toAddress'])+"#tokentxns)"
-          
-           token_symbol = logs['event']['activity'][0]['asset']
-           token_address = "["+str(logs['event']['activity'][0]['rawContract']['address'])+"](https://"+domain+"/address/"+str(logs['event']['activity'][0]['rawContract']['address'])+")"
-          
-           value = str(round(logs['event']['activity'][0]['value']))
+ # check if the network is in the dictionary
+ if network in domains:
+  # get the domain name from the dictionary
+  domain = domains[network]
 
-           # create the text string
-           message = f'*Token transfer:*\n{txhash}\nfrom {from_address} \nto {to_address}: \nvalue: {value} *{token_symbol}* {token_address}'
-           bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
-      
-  return Response(status=200)
+ # iterate over the logs array and process each log item
+ for log in logs:
+  # extract the necessary information
+  txhash = log['event']['activity'][0]['hash']
+  from_address = log['event']['activity'][0]['fromAddress']
+  to_address = log['event']['activity'][0]['toAddress']
+  token_symbol = log['event']['activity'][0]['asset']
+  token_address = log['event']['activity'][0]['rawContract']['address']
+  value = str(round(log['event']['activity'][0]['value']))
+
+ # create the text string using f-strings
+ message = f'*Token transfer:*\n[{txhash}](https://{domain}/tx/{txhash})\nfrom [{from_address}](https://{domain}/address/{from_address}#tokentxns) \nto [{to_address}](https://{domain}/address/{to_address}#tokentxns): \nvalue: {value} *{token_symbol}* [{token_address}](https://{domain}/address/{token_address})'
+ 
+ # try to send the message to the bot and handle any errors
+ try:
+  bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
+ except Exception as e:
+  print(f"Error sending message: {e}")
+ 
+ return Response(status=200)
 
 updater = Updater(TELEGRAM_API_TOKEN)
 # Start the bot
 updater.start_polling()
 
 if __name__ == '__main__':
-    app.run()
+ app.run()
