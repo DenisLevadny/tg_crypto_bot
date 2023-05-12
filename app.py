@@ -43,29 +43,29 @@ def notify():
         'MATIC_MUMBAI': 'mumbai.polygonscan.com'
         }
 
-       # check if the network is in the dictionary
-       if network in domains:
-          # get the domain name from the dictionary
-          domain = domains[network]
+        # check if the network is in the dictionary
+        if network in domains:
+           # get the domain name from the dictionary
+           domain = domains[network]
 
        # iterate over the logs array and process each log item
-       for log in logs:
-          # extract the necessary information
-          txhash = log['event']['activity'][0]['hash']
-          from_address = log['event']['activity'][0]['fromAddress']
-          to_address = log['event']['activity'][0]['toAddress']
-          token_symbol = log['event']['activity'][0]['asset']
-          token_address = log['event']['activity'][0]['rawContract']['address']
-          value = str(round(log['event']['activity'][0]['value']))
+        for log in logs:
+           # extract the necessary information
+           txhash = log['event']['activity'][0]['hash']
+           from_address = log['event']['activity'][0]['fromAddress']
+           to_address = log['event']['activity'][0]['toAddress']
+           token_symbol = log['event']['activity'][0]['asset']
+           token_address = log['event']['activity'][0]['rawContract']['address']
+           value = str(round(log['event']['activity'][0]['value']))
 
-       # create the text string using f-strings
-       message = f'*Token transfer:*\n[{txhash}](https://{domain}/tx/{txhash})\nfrom [{from_address}](https://{domain}/address/{from_address}#tokentxns) \nto [{to_address}](https://{domain}/address/{to_address}#tokentxns): \nvalue: {value} *{token_symbol}* [{token_address}](https://{domain}/address/{token_address})'
+        # create the text string using f-strings
+        message = f'*Token transfer:*\n[{txhash}](https://{domain}/tx/{txhash})\nfrom [{from_address}](https://{domain}/address/{from_address}#tokentxns) \nto [{to_address}](https://{domain}/address/{to_address}#tokentxns): \nvalue: {value} *{token_symbol}* [{token_address}](https://{domain}/address/{token_address})'
  
-       # try to send the message to the bot and handle any errors
-       try:
-          bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
-       except Exception as e:
-          print(f"Error sending message: {e}")      
+        # try to send the message to the bot and handle any errors
+        try:
+           bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
+        except Exception as e:
+           print(f"Error sending message: {e}")      
       
   return Response(status=200)
 
