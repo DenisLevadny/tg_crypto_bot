@@ -30,7 +30,7 @@ def notify():
          print("category not defined")
          
          webhook_id = logs['webhookId']
-         if (webhook_id == os.environ['ALCHEMY_KEY_GOERLY'] or webhook_id == os.environ['ALCHEMY_KEY_MUMBAI']) and category == 'token':
+         if (webhook_id == os.environ['ALCHEMY_KEY'] or webhook_id == os.environ['ALCHEMY_KEY_MUMBAI']) and category == 'token':
            # get the network name
            network = logs['event']['network']
 
