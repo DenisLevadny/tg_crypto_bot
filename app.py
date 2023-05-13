@@ -2,8 +2,6 @@ import os
 from flask import Flask, request, Response
 from telegram import Update, Bot
 from telegram.ext import Updater, CommandHandler, CallbackContext
-import requests
-import time
 
 app = Flask(__name__)
 
@@ -69,13 +67,6 @@ def notify():
         bot.send_message(chat_id=user_chat_id, text=message, parse_mode='MarkdownV2')
       
   return Response(status=200)
-
-while True:
-    try:
-        requests.get('https://your-app.render.com') # вставьте код, который выполняется, когда сайт работает
-    except:
-        # вставьте код, который выполняется, когда сайт не работает
-    time.sleep(600) # 600 секунд = 10 минут
 
 updater = Updater(TELEGRAM_API_TOKEN)
 # Start the bot
