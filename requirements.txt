@@ -1,4 +1,4 @@
 Flask
 Gunicorn
-python-telegram-bot==13.13
 gevent==21.8.0
+python-telegram-bot==13.13
