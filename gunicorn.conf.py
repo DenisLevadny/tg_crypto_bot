@@ -1,3 +1,4 @@
 preload_app = False
 worker_class = 'gevent'
-timeout = 50
+timeout = 150
+keepalive = 15
