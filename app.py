@@ -2,8 +2,6 @@ import os
 from flask import Flask, request, Response
 from telegram import Update, Bot
 from telegram.ext import Updater, CommandHandler, CallbackContext
-import requests
-import time
 
 app = Flask(__name__)
 
@@ -73,14 +71,6 @@ def notify():
 updater = Updater(TELEGRAM_API_TOKEN)
 # Start the bot
 updater.start_polling()
-
-while True:
-    try:
-        requests.get('https://test-crypto-notify-2.onrender.com/notify')
-        print('The site is working fine')
-    except:
-        print('The site doesnt work!')   
-    time.sleep(600)
 
 if __name__ == '__main__':
     app.run()
